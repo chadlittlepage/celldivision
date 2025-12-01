@@ -222,8 +222,17 @@
             width: 40px;
             height: 40px;
             cursor: pointer;
-            z-index: 1002;
-            position: relative;
+            z-index: 1100;
+            position: fixed;
+            top: 1.5rem;
+            right: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                top: 1rem;
+                right: 1.5rem;
+            }
         }
 
         .hamburger span {
