@@ -43,7 +43,8 @@ This project uses FAANG-level infrastructure:
 | Service | Status | Purpose |
 |---------|--------|---------|
 | GitHub Actions | ✅ Active | CI/CD, Deployment |
-| GitHub Pages | ✅ Active | Hosting |
+| GitHub Pages | ✅ Active | Primary Hosting |
+| Firebase Hosting | ✅ Active | Backup/CDN Hosting |
 | Lighthouse CI | ✅ Active | Performance Audits |
 | Dependabot | ✅ Active | Security Updates |
 | Sentry | ✅ Ready | Error Tracking |
@@ -66,7 +67,9 @@ open http://localhost:8080
 
 The site automatically deploys to GitHub Pages on every push to `main`:
 
-**Live Site**: https://chadlittlepage.github.io/celldivision
+**Live Sites**:
+- GitHub Pages: https://chadlittlepage.github.io/celldivision
+- Firebase: https://celldivision.web.app
 
 ## Performance
 

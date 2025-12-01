@@ -58,7 +58,10 @@ CELLDIVISION/
 
 ## Deployment
 - **GitHub Pages**: Auto-deploys from main branch
-- **URL**: https://chadlittlepage.github.io/celldivision
+- **Firebase Hosting**: Backup CDN deployment
+- **URLs**:
+  - https://chadlittlepage.github.io/celldivision (GitHub Pages)
+  - https://celldivision.web.app (Firebase)
 
 ## Sentry Integration
 ```javascript
