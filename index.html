@@ -1676,34 +1676,23 @@
                 }
             }
 
-            if (window.SmokyFluid) {
-                // Detect mobile/touch devices
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-                    || ('ontouchstart' in window)
-                    || (window.innerWidth <= 768);
+            // Detect mobile/touch devices
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                || ('ontouchstart' in window)
+                || (window.innerWidth <= 768);
 
-                // Boost settings for HDR displays
+            // On mobile, hide canvas entirely to ensure scrolling works
+            if (isMobile) {
+                const canvas = document.getElementById('fluid-canvas');
+                if (canvas) {
+                    canvas.style.display = 'none';
+                }
+                console.log('📱 Mobile detected - fluid disabled for scroll performance');
+            } else if (window.SmokyFluid) {
+                // Desktop only - full fluid effect
                 const isHDR = hdr.hasHDR || hdr.hasP3;
 
-                // Mobile-optimized config (lighter for battery/performance)
-                const mobileConfig = {
-                    id: "fluid-canvas",
-                    simResolution: 32,          // Much lower for mobile
-                    dyeResolution: 256,         // Lower color resolution
-                    densityDissipation: 0.99,   // Faster fade
-                    velocityDissipation: 0.99,
-                    curl: 10,                   // Less curl
-                    splatRadius: 0.4,           // Larger splats (fewer needed)
-                    pressure: 0.5,
-                    shading: false,             // No shading on mobile
-                    bloom: false,               // No bloom on mobile
-                    colorUpdateSpeed: 15,
-                    paused: false,
-                    transparent: true
-                };
-
-                // Desktop config (full quality)
-                const desktopConfig = {
+                SmokyFluid.initFluid({
                     id: "fluid-canvas",
                     simResolution: 128,
                     dyeResolution: 1024,
@@ -1725,27 +1714,9 @@
                     sunraysWeight: isHDR ? 0.5 : 0,
                     paused: false,
                     transparent: true
-                };
+                });
 
-                // Use appropriate config
-                SmokyFluid.initFluid(isMobile ? mobileConfig : desktopConfig);
-
-                // On mobile, prevent canvas from blocking scroll
-                if (isMobile) {
-                    const canvas = document.getElementById('fluid-canvas');
-                    if (canvas) {
-                        // Remove any touch event listeners that block scrolling
-                        canvas.style.pointerEvents = 'none';
-                        canvas.style.touchAction = 'none';
-
-                        // Intercept and allow scroll through
-                        canvas.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-                        canvas.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
-                    }
-                }
-
-                // Log status
-                console.log(isMobile ? '📱 Mobile fluid (lite mode)' : (isHDR ? '🌈 HDR fluid enabled' : '🖥️ Desktop fluid'));
+                console.log(isHDR ? '🌈 HDR fluid enabled' : '🖥️ Desktop fluid enabled');
             }
         });
     </script>
