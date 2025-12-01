@@ -132,7 +132,7 @@
             touch-action: none;
         }
 
-        /* Mobile: ensure scrolling works */
+        /* Mobile: ensure scrolling works + GPU boost */
         @media (max-width: 768px) {
             html, body {
                 overflow-x: hidden;
@@ -143,6 +143,11 @@
             #fluid-canvas {
                 pointer-events: none !important;
                 touch-action: none !important;
+                /* RENDER AT HALF RESOLUTION FOR SPEED */
+                width: 200% !important;
+                height: 200% !important;
+                transform: scale(0.5) !important;
+                transform-origin: top left !important;
             }
         }
 
@@ -1710,42 +1715,41 @@
             const isHDR = hdr.hasHDR || hdr.hasP3;
 
             if (window.SmokyFluid) {
-                // OPTIMIZED CONFIG - Detailed + Lightning Fast
-                const optimizedConfig = {
+                // DETAILED + FAST CONFIG
+                const config = {
                     id: "fluid-canvas",
-                    // Resolution: High detail, GPU-friendly power-of-2
-                    simResolution: isMobile ? 64 : 128,
-                    dyeResolution: isMobile ? 512 : 1024,
-                    // Dissipation: Balanced for visible trails
+                    // HIGH DETAIL - same for mobile (CSS handles perf)
+                    simResolution: 128,
+                    dyeResolution: 1024,
+                    // Smooth dissipation
                     densityDissipation: 0.97,
                     velocityDissipation: 0.98,
-                    // Physics: Optimized
-                    curl: isMobile ? 20 : 30,
-                    splatRadius: 0.25,           // Smaller = less fill = faster
-                    pressure: 0.6,               // Lower = fewer iterations
-                    pressureIterations: 15,      // Reduced from default 20
-                    // Shading: ON for detail
+                    // Full physics
+                    curl: 30,
+                    splatRadius: 0.3,
+                    pressure: 0.8,
+                    // Shading ON
                     shading: true,
-                    // Bloom: Smart HDR
+                    // Bloom ON with HDR boost
                     bloom: true,
-                    bloomIterations: 2,          // Minimal passes
-                    bloomResolution: 128,        // Low res = fast
-                    bloomIntensity: isHDR ? 0.7 : 0.4,
-                    bloomThreshold: 0.6,
-                    bloomSoftKnee: 0.5,
-                    // Color
-                    colorUpdateSpeed: 8,         // Faster updates
-                    // Sunrays: Desktop HDR only
-                    sunrays: !isMobile && isHDR,
-                    sunraysResolution: 128,      // Low res
-                    sunraysWeight: 0.3,
+                    bloomIterations: 3,
+                    bloomResolution: 256,
+                    bloomIntensity: isHDR ? 0.8 : 0.5,
+                    bloomThreshold: 0.5,
+                    bloomSoftKnee: 0.6,
+                    // Colors
+                    colorUpdateSpeed: 10,
+                    // Sunrays for HDR
+                    sunrays: isHDR,
+                    sunraysResolution: 196,
+                    sunraysWeight: isHDR ? 0.4 : 0,
                     // Core
                     paused: false,
                     transparent: true
                 };
 
-                // Initialize fluid with optimized config
-                SmokyFluid.initFluid(optimizedConfig);
+                // Initialize fluid
+                SmokyFluid.initFluid(config);
 
                 // Log status
                 console.log(`⚡ Fluid: ${isMobile ? 'Mobile' : 'Desktop'} | ${isHDR ? 'HDR' : 'SDR'} | Optimized`);
