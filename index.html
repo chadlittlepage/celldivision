@@ -1681,18 +1681,28 @@
                 || ('ontouchstart' in window)
                 || (window.innerWidth <= 768);
 
-            // On mobile, hide canvas entirely to ensure scrolling works
-            if (isMobile) {
-                const canvas = document.getElementById('fluid-canvas');
-                if (canvas) {
-                    canvas.style.display = 'none';
-                }
-                console.log('📱 Mobile detected - fluid disabled for scroll performance');
-            } else if (window.SmokyFluid) {
-                // Desktop only - full fluid effect
-                const isHDR = hdr.hasHDR || hdr.hasP3;
+            const isHDR = hdr.hasHDR || hdr.hasP3;
 
-                SmokyFluid.initFluid({
+            if (window.SmokyFluid) {
+                // Mobile config (lighter)
+                const mobileConfig = {
+                    id: "fluid-canvas",
+                    simResolution: 32,
+                    dyeResolution: 256,
+                    densityDissipation: 0.99,
+                    velocityDissipation: 0.99,
+                    curl: 10,
+                    splatRadius: 0.5,
+                    pressure: 0.4,
+                    shading: false,
+                    bloom: false,
+                    colorUpdateSpeed: 20,
+                    paused: false,
+                    transparent: true
+                };
+
+                // Desktop config (full quality)
+                const desktopConfig = {
                     id: "fluid-canvas",
                     simResolution: 128,
                     dyeResolution: 1024,
@@ -1714,9 +1724,33 @@
                     sunraysWeight: isHDR ? 0.5 : 0,
                     paused: false,
                     transparent: true
-                });
+                };
 
-                console.log(isHDR ? '🌈 HDR fluid enabled' : '🖥️ Desktop fluid enabled');
+                // Initialize fluid
+                SmokyFluid.initFluid(isMobile ? mobileConfig : desktopConfig);
+
+                // CRITICAL: Fix mobile scrolling after library loads
+                if (isMobile) {
+                    // Wait for library to set up its handlers, then override
+                    setTimeout(() => {
+                        const canvas = document.getElementById('fluid-canvas');
+
+                        // Clone and replace canvas to remove all event listeners
+                        const newCanvas = canvas.cloneNode(true);
+                        canvas.parentNode.replaceChild(newCanvas, canvas);
+
+                        // Re-init fluid on the new canvas
+                        SmokyFluid.initFluid(mobileConfig);
+
+                        // Force canvas to not block touch
+                        newCanvas.style.pointerEvents = 'none';
+                        newCanvas.style.touchAction = 'auto';
+
+                        console.log('📱 Mobile fluid enabled with scroll fix');
+                    }, 100);
+                } else {
+                    console.log(isHDR ? '🌈 HDR fluid enabled' : '🖥️ Desktop fluid enabled');
+                }
             }
         });
     </script>
