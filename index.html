@@ -1639,6 +1639,32 @@
         });
     </script>
 
+    <!-- MOBILE SCROLL FIX: Intercept before fluid library loads -->
+    <script>
+        (function() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                || ('ontouchstart' in window)
+                || (window.innerWidth <= 768);
+
+            if (isMobile) {
+                // Override addEventListener to prevent non-passive touch listeners
+                const originalAddEventListener = EventTarget.prototype.addEventListener;
+                EventTarget.prototype.addEventListener = function(type, listener, options) {
+                    if (type === 'touchstart' || type === 'touchmove') {
+                        // Force passive for touch events
+                        if (typeof options === 'object') {
+                            options.passive = true;
+                        } else if (typeof options === 'boolean' || options === undefined) {
+                            options = { capture: options || false, passive: true };
+                        }
+                    }
+                    return originalAddEventListener.call(this, type, listener, options);
+                };
+                console.log('📱 Mobile scroll protection enabled');
+            }
+        })();
+    </script>
+
     <!-- WebGL Fluid Cursor Library -->
     <script src="https://cdn.jsdelivr.net/npm/smokey-fluid-cursor@latest/dist/index.global.js"></script>
     <script>
@@ -1729,28 +1755,8 @@
                 // Initialize fluid
                 SmokyFluid.initFluid(isMobile ? mobileConfig : desktopConfig);
 
-                // CRITICAL: Fix mobile scrolling after library loads
-                if (isMobile) {
-                    // Wait for library to set up its handlers, then override
-                    setTimeout(() => {
-                        const canvas = document.getElementById('fluid-canvas');
-
-                        // Clone and replace canvas to remove all event listeners
-                        const newCanvas = canvas.cloneNode(true);
-                        canvas.parentNode.replaceChild(newCanvas, canvas);
-
-                        // Re-init fluid on the new canvas
-                        SmokyFluid.initFluid(mobileConfig);
-
-                        // Force canvas to not block touch
-                        newCanvas.style.pointerEvents = 'none';
-                        newCanvas.style.touchAction = 'auto';
-
-                        console.log('📱 Mobile fluid enabled with scroll fix');
-                    }, 100);
-                } else {
-                    console.log(isHDR ? '🌈 HDR fluid enabled' : '🖥️ Desktop fluid enabled');
-                }
+                // Log status
+                console.log(isMobile ? '📱 Mobile fluid (lite)' : (isHDR ? '🌈 HDR fluid' : '🖥️ Desktop fluid'));
             }
         });
     </script>
