@@ -143,10 +143,10 @@
             #fluid-canvas {
                 pointer-events: none !important;
                 touch-action: none !important;
-                /* RENDER AT HALF RESOLUTION FOR SPEED */
-                width: 200% !important;
-                height: 200% !important;
-                transform: scale(0.5) !important;
+                /* RENDER AT HALF RES, SCALE UP = 4x FASTER */
+                width: 50vw !important;
+                height: 50vh !important;
+                transform: scale(2) !important;
                 transform-origin: top left !important;
             }
         }
