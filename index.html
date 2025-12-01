@@ -132,7 +132,7 @@
             touch-action: none;
         }
 
-        /* Mobile: ensure scrolling works + GPU boost */
+        /* Mobile: scrolling fix */
         @media (max-width: 768px) {
             html, body {
                 overflow-x: hidden;
@@ -143,11 +143,6 @@
             #fluid-canvas {
                 pointer-events: none !important;
                 touch-action: none !important;
-                /* RENDER AT HALF RES, SCALE UP = 4x FASTER */
-                width: 50vw !important;
-                height: 50vh !important;
-                transform: scale(2) !important;
-                transform-origin: top left !important;
             }
         }
 
@@ -1715,34 +1710,34 @@
             const isHDR = hdr.hasHDR || hdr.hasP3;
 
             if (window.SmokyFluid) {
-                // DETAILED + FAST CONFIG
+                // CONFIG: Balanced for device
                 const config = {
                     id: "fluid-canvas",
-                    // HIGH DETAIL - same for mobile (CSS handles perf)
-                    simResolution: 128,
-                    dyeResolution: 1024,
-                    // Smooth dissipation
+                    // Resolution: Mobile=64/512, Desktop=128/1024
+                    simResolution: isMobile ? 64 : 128,
+                    dyeResolution: isMobile ? 512 : 1024,
+                    // Dissipation
                     densityDissipation: 0.97,
                     velocityDissipation: 0.98,
-                    // Full physics
-                    curl: 30,
-                    splatRadius: 0.3,
-                    pressure: 0.8,
-                    // Shading ON
+                    // Physics
+                    curl: isMobile ? 20 : 30,
+                    splatRadius: isMobile ? 0.4 : 0.3,
+                    pressure: isMobile ? 0.6 : 0.8,
+                    // Shading: ON everywhere
                     shading: true,
-                    // Bloom ON with HDR boost
+                    // Bloom: ON everywhere, HDR boost
                     bloom: true,
-                    bloomIterations: 3,
-                    bloomResolution: 256,
+                    bloomIterations: isMobile ? 2 : 4,
+                    bloomResolution: isMobile ? 128 : 256,
                     bloomIntensity: isHDR ? 0.8 : 0.5,
                     bloomThreshold: 0.5,
                     bloomSoftKnee: 0.6,
                     // Colors
-                    colorUpdateSpeed: 10,
-                    // Sunrays for HDR
-                    sunrays: isHDR,
+                    colorUpdateSpeed: isMobile ? 15 : 10,
+                    // Sunrays: Desktop only
+                    sunrays: !isMobile && isHDR,
                     sunraysResolution: 196,
-                    sunraysWeight: isHDR ? 0.4 : 0,
+                    sunraysWeight: 0.4,
                     // Core
                     paused: false,
                     transparent: true
