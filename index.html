@@ -1710,19 +1710,24 @@
             const isHDR = hdr.hasHDR || hdr.hasP3;
 
             if (window.SmokyFluid) {
-                // Mobile config (lighter)
+                // Mobile config - DETAILED + HDR + FAST
                 const mobileConfig = {
                     id: "fluid-canvas",
-                    simResolution: 32,
-                    dyeResolution: 256,
-                    densityDissipation: 0.99,
-                    velocityDissipation: 0.99,
-                    curl: 10,
-                    splatRadius: 0.5,
-                    pressure: 0.4,
-                    shading: false,
-                    bloom: false,
-                    colorUpdateSpeed: 20,
+                    simResolution: 64,           // Good physics, still fast
+                    dyeResolution: 512,          // Crisp colors
+                    densityDissipation: 0.98,    // Visible trails
+                    velocityDissipation: 0.99,   // Smooth flow
+                    curl: 25,                    // Nice swirls
+                    splatRadius: 0.35,           // Good splat size
+                    pressure: 0.7,               // Responsive
+                    shading: true,               // 3D depth!
+                    bloom: isHDR,                // HDR bloom if supported
+                    bloomIterations: 3,          // Fast bloom
+                    bloomResolution: 128,        // Low res bloom = fast
+                    bloomIntensity: isHDR ? 0.6 : 0.3,
+                    bloomThreshold: 0.5,
+                    colorUpdateSpeed: 12,
+                    sunrays: false,              // Skip sunrays on mobile
                     paused: false,
                     transparent: true
                 };
