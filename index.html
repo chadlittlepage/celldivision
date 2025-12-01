@@ -213,16 +213,16 @@
             to { text-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink), 0 0 80px var(--neon-pink); }
         }
 
-        /* Hamburger Menu Button */
+        /* Hamburger Menu Button - 25% smaller */
         .hamburger {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
-            z-index: 1100;
+            z-index: 9999;
             position: fixed;
             top: 1.5rem;
             right: 3rem;
@@ -237,10 +237,10 @@
 
         .hamburger span {
             display: block;
-            width: 28px;
+            width: 21px;
             height: 2px;
             background: var(--text-light);
-            margin: 4px 0;
+            margin: 3px 0;
             transition: all 0.3s ease;
             box-shadow: 0 0 10px var(--neon-cyan);
         }
@@ -251,16 +251,16 @@
         }
 
         .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
+            transform: rotate(45deg) translate(5px, 5px);
         }
 
         .hamburger.active span:nth-child(2) {
             opacity: 0;
-            transform: translateX(-20px);
+            transform: translateX(-15px);
         }
 
         .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
+            transform: rotate(-45deg) translate(5px, -5px);
         }
 
         /* Dropdown Menu */
