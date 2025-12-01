@@ -1283,9 +1283,6 @@
                 text-align: center;
             }
 
-            #fluid-canvas {
-                display: none;
-            }
         }
 
         /* Reveal Animation */
@@ -1664,43 +1661,61 @@
             }
 
             if (window.SmokyFluid) {
+                // Detect mobile/touch devices
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                    || ('ontouchstart' in window)
+                    || (window.innerWidth <= 768);
+
                 // Boost settings for HDR displays
                 const isHDR = hdr.hasHDR || hdr.hasP3;
 
-                SmokyFluid.initFluid({
+                // Mobile-optimized config (lighter for battery/performance)
+                const mobileConfig = {
                     id: "fluid-canvas",
-                    // Resolution - balanced for detail
+                    simResolution: 32,          // Much lower for mobile
+                    dyeResolution: 256,         // Lower color resolution
+                    densityDissipation: 0.99,   // Faster fade
+                    velocityDissipation: 0.99,
+                    curl: 10,                   // Less curl
+                    splatRadius: 0.4,           // Larger splats (fewer needed)
+                    pressure: 0.5,
+                    shading: false,             // No shading on mobile
+                    bloom: false,               // No bloom on mobile
+                    colorUpdateSpeed: 15,
+                    paused: false,
+                    transparent: true
+                };
+
+                // Desktop config (full quality)
+                const desktopConfig = {
+                    id: "fluid-canvas",
                     simResolution: 128,
                     dyeResolution: 1024,
-                    // Dissipation
                     densityDissipation: 0.97,
                     velocityDissipation: 0.98,
-                    // Physics
                     curl: 30,
                     splatRadius: 0.3,
                     pressure: 0.8,
-                    // Visual - HDR enhanced
                     shading: true,
                     bloom: true,
-                    bloomIterations: isHDR ? 6 : 4,       // More bloom for HDR
-                    bloomResolution: isHDR ? 512 : 256,   // Higher res for HDR
-                    bloomIntensity: isHDR ? 0.8 : 0.4,    // Brighter bloom for HDR
-                    bloomThreshold: isHDR ? 0.4 : 0.6,    // Lower threshold = more glow
-                    bloomSoftKnee: isHDR ? 0.7 : 0.5,     // Smoother bloom falloff
-                    // Color - more vibrant for HDR
+                    bloomIterations: isHDR ? 6 : 4,
+                    bloomResolution: isHDR ? 512 : 256,
+                    bloomIntensity: isHDR ? 0.8 : 0.4,
+                    bloomThreshold: isHDR ? 0.4 : 0.6,
+                    bloomSoftKnee: isHDR ? 0.7 : 0.5,
                     colorUpdateSpeed: 10,
-                    sunrays: isHDR,                       // Light rays for HDR
+                    sunrays: isHDR,
                     sunraysResolution: 196,
                     sunraysWeight: isHDR ? 0.5 : 0,
-                    // Performance
                     paused: false,
                     transparent: true
-                });
+                };
 
-                // Log HDR status
-                if (isHDR) {
-                    console.log('🌈 HDR fluid enabled - enhanced bloom & sunrays');
-                }
+                // Use appropriate config
+                SmokyFluid.initFluid(isMobile ? mobileConfig : desktopConfig);
+
+                // Log status
+                console.log(isMobile ? '📱 Mobile fluid (lite mode)' : (isHDR ? '🌈 HDR fluid enabled' : '🖥️ Desktop fluid'));
             }
         });
     </script>
