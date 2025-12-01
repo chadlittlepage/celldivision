@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "faang-template"
+  },
+  "targets": {
+    "faang-template": {
+      "hosting": {
+        "celldivision": [
+          "celldivision"
+        ]
+      }
+    }
+  }
+}
